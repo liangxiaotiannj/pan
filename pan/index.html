@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script type="text/javascript" src="./jquery.js"></script>
+    <style>
+        html,body{
+            margin: 0px;
+            height: 100%;
+            width: 100%;
+        }
+        body{
+            background:url('./images/bj.png') no-repeat;
+            background-size: cover;
+            font-family: "Helvetica Neue",Helvetica,Arial,"Hiragino Sans GB","Hiragino Sans GB W3","Microsoft YaHei UI","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif;
+        }
+        .btn_box{
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 10px;
+        }
+        .btn_box button{
+            width: 100px;
+            height: 50px;
+            font-size: 20px;
+        }
+        #box{
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            transform:rotateX(0deg) rotateY(0deg);
+            position: relative;
+            cursor: pointer;
+        }
+        .lunpan_box{
+            width: 500px;
+            height: 500px;
+            position: absolute;
+            top:50%;
+            left:50%;
+            margin-left: -250px;
+            margin-top: 150px;
+            transform-style: preserve-3d;
+            transition: 1s;
+            transform:rotateX(-60deg)rotateY(0deg)rotateZ(20deg)translateX(100px)translateY(100px)translateZ(-100px);
+        }
+        .step_name_box{
+            width: 250px;
+            height: 50px;
+            text-align: center;
+            transform:translateX(110px)translateY(250px)translateZ(0px);
+            font-weight: bold;
+            color:#fff;
+            font-size: 40px;
+        }
+        .lunpan{
+            position: absolute;
+            border-radius: 50%;
+            transition: all 0.5s;
+
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+            -webkit-backface-visibility: hidden; 
+            -webkit-transform-style: preserve-3d;
+            transform:translate3d(0,0,0);
+            -webkit-transform:translate3d(0,0,0);
+        }
+        .lunpan img{
+            width: 100%;
+        }
+        .add_transition{
+            transition: all 2s;
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+            -webkit-backface-visibility: hidden; 
+            -webkit-transform-style: preserve-3d;
+            transform:translate3d(0,0,0);
+        }
+        .background_1{
+            width: 480px;
+            height: 480px;
+            transform:rotateX(90deg)translateZ(-100px)rotateZ(180deg);
+        }
+        .background_2{
+            width: 430px;
+            height: 430px;
+            transform:translateX(25px)translateY(165px)rotateX(90deg)translateZ(40px)rotateZ(180deg);
+        }
+        .background_3{
+            width: 370px;
+            height: 370px;
+            transform:translateX(55px)translateY(210px)rotateX(90deg)translateZ(60px)rotateZ(180deg);
+        }
+        .background_4{
+            width: 280px;
+            height: 280px;
+            transform:translateX(100px)translateY(255px)rotateX(90deg)translateZ(75px)rotateZ(180deg);
+        }
+        .background_5{
+            width: 240px;
+            height: 240px;
+            transform:translateX(120px)translateY(285px)rotateX(90deg)translateZ(90px)rotateZ(180deg);
+        }
+        .background_6{
+            width: 200px;
+            height: 200px;
+            transform:translateX(140px)translateY(325px)rotateX(90deg)translateZ(110px)rotateZ(180deg);
+        }
+
+        .background_7{
+            width: 165px;
+            height: 165px;
+            transform:translateX(156px)translateY(325px)rotateX(90deg)translateZ(110px)rotateZ(180deg);
+        }
+
+        .flag_position{
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            /* transition: all 1s; */
+        }
+        .flag{
+            position: absolute;
+            width: 200px;
+            min-height: 60px;
+            transition: 0.5s;
+            background: rgba(0, 198, 223, 0.6);
+            /* transform:translateY(70px)translateX(0px)translateZ(32px)rotateY(180deg)rotateX(90deg); */
+            transform:translateY(6px)translateX(0px)translateZ(0px)rotateY(180deg)rotateX(90deg);
+            box-sizing: border-box;
+            padding: 5px;
+            color: #fff;
+            opacity:0;
+            transform-origin: bottom;
+        }
+        .flag_line_box{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            transform:rotateZ(90deg);
+            transition: all .5s;
+
+        }
+        .flag_line_content{
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: all 0.1s;
+            transform-style: preserve-3d;
+        }
+        .flag_line_box .flag_line{
+            position: absolute;
+            
+            height: 2px;
+            background: #01bbc1;
+
+            transform-style: preserve-3d;
+            transition: all 0.1s;
+            display: none;
+        }
+        .line_po{
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .line_mark1{
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            top:-3px;
+            left: 75px;
+            background: #01bbc1;
+        }
+        .line_mark2{
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            top:-4px;
+            left: 60px;
+            background: #01bbc1;
+        }
+        .line_mark3{
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            top:-5px;
+            left: 40px;
+            background: #01bbc1;
+        }
+        .flag_line1{
+
+            width: 150px;
+            left: 25px;
+            top: -75px;
+            transform:rotateZ(90deg);
+        }
+        .flag_line2{
+            width: 150px;
+            left: -150px;
+            top: 100px;
+            
+        }
+        .flag_line3{
+            width: 150px;
+            left: 200px;
+            top: 100px;
+            transform:rotateZ(180deg);
+        }
+        .flag_line4{
+            width: 150px;
+            left: 25px;
+            top: 275px;
+            transform:rotateZ(270deg);
+        }
+        .flag1{
+            left: -100px;
+            bottom: 350px;
+        }
+        .flag2{
+            left: -350px;
+            bottom: 100px;
+        }
+        .flag3{
+            left: 100px;
+            bottom: -150px;
+        }
+        .flag4{
+            left: 350px;
+            bottom: 100px;
+        }
+        .flag_content{
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .horn{
+            position: absolute;
+            width: 20px;
+            height: 6px;
+            background: #1ab7bc;
+        }
+        .horn1{
+            top:-8px;
+            left: -5px;
+        }
+        .horn2{
+            top:-8px;
+            right: -5px;
+        }
+        .horn3{
+            bottom:-8px;
+            left: -5px;
+        }
+        .horn4{
+            bottom:-8px;
+            right: -5px;
+        }
+
+        .op_btn{
+            position: fixed;
+            width: 300px;
+            height: 100%;
+            top: 0;
+            z-index: 100;
+            transition: all 1s;
+            cursor: pointer;
+            opacity: 0.2;
+        }
+        .prev_btn{
+            left: 0;
+            background: linear-gradient(to left,rgba(0,0,0,0), rgba(0,0,0,0.5));
+        }
+        .prev_btn:hover{
+            opacity: 0.8;
+            
+        }
+        .next_btn{
+            right: 0;
+            background: linear-gradient(to right,rgba(0,0,0,0), rgba(0,0,0,0.5));
+        }
+        .next_btn:hover{
+            opacity: 0.8;
+            
+        }
+        .card_title{
+            font-size: 18px;
+            color: #054552;
+        }
+        .card_data{
+            font-size: 15px;
+            color: #fff;
+        }
+        .content_box{
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            padding-left: 5px;
+            position: relative;
+            padding-right: 60px;
+        }
+        .content_box .modification{
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            width: 50px;
+            height: 44px;
+            margin-top: -22px;
+        }
+    </style>
+</head>
+<body>
+    <div class="op_btn prev_btn" onclick="lunpan.doChange('prve')"></div>
+    <div class="op_btn next_btn" onclick="lunpan.doChange('next')"></div>
+
+    <div id="box">
+      <div class="lunpan_box" id="lunpan_box">
+        <div class="lunpan background_1">
+            <img id="pan1" src="./images/out1.png" alt="">
+        </div>
+        <div class="lunpan background_2">
+            
+                <img id="pan2" src="./images/out2.png" alt="">
+        </div> 
+        <div class="lunpan background_3">
+            <img id="pan3" src="./images/out3.png" alt="">
+        </div>
+        <div class="lunpan background_4">
+            <img id="pan4" src="./images/out4.png" alt="">
+        </div>
+        <div class="lunpan background_5">
+            <img id="pan5" src="./images/out5.jpg" alt="">
+        </div>
+        <div class="lunpan background_6">
+            <div class="flag_position">
+                <img id="pan6" src="./images/out6.png" alt="">
+                <div class="flag_line_box">
+                        <div class="flag_line_content">
+                            <div class="flag_line flag_line1">
+                                <div class="line_po">
+                                    <div class="line_mark1"></div>
+                                    <div class="line_mark2"></div>
+                                    <div class="line_mark3"></div>
+                                </div>
+                            </div>
+                            <div class="flag_line flag_line2">
+                                <div class="line_po">
+                                    <div class="line_mark1"></div>
+                                    <div class="line_mark2"></div>
+                                    <div class="line_mark3"></div>
+                                </div>
+                            </div>
+                            <div class="flag_line flag_line3">
+                                <div class="line_po">
+                                    <div class="line_mark1"></div>
+                                    <div class="line_mark2"></div>
+                                    <div class="line_mark3"></div>
+                                </div>
+                            </div>
+                            <div class="flag_line flag_line4">
+                                <div class="line_po">
+                                    <div class="line_mark1"></div>
+                                    <div class="line_mark2"></div>
+                                    <div class="line_mark3"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <div class="flag flag1" onclick="lunpan.showStep('step_1')">
+                    <div class="flag_content">
+                        <div class="horn horn1"></div>
+                        <div class="horn horn2"></div>
+                        <div class="horn horn3"></div>
+                        <div class="horn horn4"></div>
+                        <div class="content_box" id="card1">
+                            <div class="card_title"></div>
+                            <div class="card_data"></div>
+                            <img class="modification" src="./images/modification1.png" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="flag flag2" onclick="lunpan.showStep('step_2')">
+                    <div class="flag_content">
+                        <div class="horn horn1"></div>
+                        <div class="horn horn2"></div>
+                        <div class="horn horn3"></div>
+                        <div class="horn horn4"></div>
+                        <div class="content_box" id="card2">
+                            <div class="card_title"></div>
+                            <div class="card_data"></div>
+                            <img class="modification" src="./images/modification2.png" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="flag flag3" onclick="lunpan.showStep('step_3')">
+                    <div class="flag_content">
+                        <div class="horn horn1"></div>
+                        <div class="horn horn2"></div>
+                        <div class="horn horn3"></div>
+                        <div class="horn horn4"></div>
+                        <div class="content_box" id="card3">
+                            <div class="card_title"></div>
+                            <div class="card_data"></div>
+                            <img class="modification" src="./images/modification3.png" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="flag flag4" onclick="lunpan.showStep('step_4')">
+                    <div class="flag_content">
+                        <div class="horn horn1"></div>
+                        <div class="horn horn2"></div>
+                        <div class="horn horn3"></div>
+                        <div class="horn horn4"></div>
+                        <div class="content_box" id="card4">
+                            <div class="card_title"></div>
+                            <div class="card_data"></div>
+                            <img class="modification" src="./images/modification4.png" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lunpan background_7" onclick="lunpan.opPan()">
+            <img id="pan7" src="./images/out7.png" alt="">
+        </div>
+
+        <div class="step_name_box" onclick="lunpan.opPan()">
+            <span class="step_name"></span>
+        </div>
+      </div>
+    </div>
+    <script>
+        const lunpan = {}
+        lunpan.__proto__ = {
+            panStatus: true, //轮盘是否开启
+            normalStep: 'step_1', //默认步骤
+            nextStep: 'step_2',
+            prevStep: 'step_4',
+            flagShow: false, //卡片是否展示
+            baseDeg: 90,  //初始化转角
+            auto:false,
+            canOp:false, //防抖
+            lineSpeedConfig: {  //轮盘图形配置
+                pan1:{
+                    id:'#pan1',
+                    speed:0,
+                    deg:0,
+                    doRotate:false,
+                    rotate:1,
+                    rotatesIndex:0,
+                    canRotate:false,
+                    type:'add',
+                    rotates:[
+                        0.1, 0.1, 0.1, 0.3, 0.3, 0.3, 0.3, 0.5, 0.5, 0.5, 0.5, 0.5, 0.7, 0.7, 0.7, 0.7, 0,7, 0.9, 0.9, 0.9,
+                        0.9, 0.9, 0.9, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 1.4, 1.4, 1.4, 1.4, 1.4, 1.7, 1.7, 1.7, 1.7, 1.7, 1.7,
+                        2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 
+                        1.7, 1.7, 1.7, 1.7, 1.7, 1.7, 1.4, 1.4, 1.4, 1.4, 1.4, 1.1, 1.1, 1.1, 1.1, 1.1, 1.1, 0.9, 0.9, 0.9,
+                        0.9, 0.9, 0.9, 0.7, 0.7, 0.7, 0.1, 0,1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 
+                    ]
+                },
+                pan2:{
+                    id:'#pan2',
+                    speed:-0.5,
+                    deg:0,
+                    doRotate:false,
+                    rotate:0
+                },
+                pan3:{
+                    id:'#pan3',
+                    speed:-0.5,
+                    deg:0,
+                    doRotate:true,
+                    rotate:0
+                },
+                pan4:{
+                    id:'#pan4',
+                    speed:0.5,
+                    deg:0,
+                    doRotate:false,
+                    rotate:0
+                },
+                pan5:{
+                    id:'#pan5',
+                    speed:0,
+                    deg:0,
+                    doRotate:false,
+                    rotate:1.5
+                },
+                pan6:{
+                    id:'#pan6',
+                    speed:-1,
+                    deg:0,
+                    doRotate:false,
+                    rotate:0
+                },
+                pan7:{
+                    id:'#pan7',
+                    speed:1,
+                    deg:0,
+                    doRotate:true,
+                    rotate:0
+                }
+            },
+            stepsConfig: {   //轮盘转动配置
+                step_1:{
+                    position1:{
+                        left: '-100px',
+                        bottom: '350px',
+                        opacity:1
+                    },
+                    position2:{
+                        left: '-350px',
+                        bottom: '100px',
+                        opacity:0.7
+                    },
+                    position3:{
+                        left: '100px',
+                        bottom: '-150px',
+                        opacity:0.3
+                    },
+                    position4:{
+                        left: '350px',
+                        bottom: '100px',
+                        opacity:0.7
+                    },
+                    namePosition:{
+                        cardId:'card1',
+                        name:'LGE',
+                        title:'美国总产量',
+                        data:'10,000万'
+                    }
+                },
+                step_2:{
+                    position1:{
+                        left: '350px',
+                        bottom: '100px',
+                        opacity: 0.7
+                    },
+                    position2:{
+                        left: '-100px',
+                        bottom: '350px',
+                        opacity: 1
+                    },
+                    position3:{
+                        left: '-350px',
+                        bottom: '100px',
+                        opacity: 0.7
+                    },
+                    position4:{
+                        left: '100px',
+                        bottom: '-150px',
+                        opacity: 0.3
+                    },
+                    namePosition:{
+                        cardId:'card2',
+                        name:'GF6',
+                        title:'法国总产量',
+                        data:'10,000万'
+                    }
+                },
+                step_3:{
+                    position1:{
+                        left: '100px',
+                        bottom: '-150px',
+                        opacity: 0.5
+                    },
+                    position2:{
+                        left: '350px',
+                        bottom: '100px',
+                        opacity: 0.7
+                    },
+                    position3:{
+                        left: '-100px',
+                        bottom: '350px',
+                        opacity: 1
+                    },
+                    position4:{
+                        left: '-350px',
+                        bottom: '100px',
+                        opacity: 0.7
+                    },
+                    namePosition:{
+                        cardId:'card3',
+                        name:'GF9',
+                        title:'日本总产量',
+                        data:'10,000万'
+                    }
+                },
+                step_4:{
+                    position1:{
+                        left: '-350px',
+                        bottom: '100px',
+                        opacity: 0.7
+                    },
+                    position2:{
+                        left: '100px',
+                        bottom: '-150px',
+                        opacity: 0.3
+                    },
+                    position3:{
+                        left: '350px',
+                        bottom: '100px',
+                        opacity: 0.7
+                    },
+                    position4:{
+                        left: '-100px',
+                        bottom: '350px',
+                        opacity: 1
+                    },
+                    namePosition:{
+                        cardId:'card4',
+                        name:'CSS',
+                        title:'法国总产量',
+                        data:'10,000万'
+                    }
+                }
+            },
+            //自动播放配置
+            autoPlayConfig:{
+                intervalTime: 5000
+            },
+            //防抖函数
+            antiShake:function(){
+                if(!this.canOp){
+                    
+                    
+                    this.canOp = true
+                    return false
+                }else{
+                    let me = this
+                    setTimeout(function(){
+                        me.canOp = false
+                    },200)
+                    return true
+                }
+                return false
+            },
+            // 初始化
+            init:function(config){
+                console.log(config)
+                let me = this
+                let stepsConfig = me.stepsConfig
+                for(let key in stepsConfig){
+                    $('#'+stepsConfig[key]['namePosition']['cardId']).find('.card_title').text(stepsConfig[key]['namePosition']['title'])
+                    $('#'+stepsConfig[key]['namePosition']['cardId']).find('.card_data').text(stepsConfig[key]['namePosition']['data'])
+                }
+                me.calculationCardHeight()
+                setInterval(function(){
+                    me.rotate()
+                },10)
+
+                if(!!config&&config['autoPlay']){
+                    if(!!config['intervalTime']){
+                        me.autoPlayConfig['intervalTime'] = config['intervalTime']
+                    }
+                    me.doAutoPlay()
+                }
+            },
+            // 渲染
+            loadView:function(stepObj,show){
+                this.loadBaseLine()
+                let stepsConfig = this.stepsConfig
+                let normalStep = this.normalStep
+                if(!!stepObj){
+
+                }else{
+                    stepObj = stepsConfig[normalStep]
+                }
+                if(normalStep == 'step_1'){
+                    this.nextStep = 'step_2'
+                    this.prevStep = 'step_4'
+                }else if(normalStep == 'step_2'){
+                    this.nextStep = 'step_3'
+                    this.prevStep = 'step_1'
+                }else if(normalStep == 'step_3'){
+                    this.nextStep = 'step_4'
+                    this.prevStep = 'step_2'
+                }else if(normalStep == 'step_4'){
+                    this.nextStep = 'step_1'
+                    this.prevStep = 'step_3'
+                }
+                let opacity1 = stepObj['position1']['opacity'],
+                    opacity2 = stepObj['position2']['opacity'],
+                    opacity3 = stepObj['position3']['opacity'],
+                    opacity4 = stepObj['position4']['opacity']
+                
+                if(!show){
+                    opacity1 = 0
+                    opacity2 = 0
+                    opacity3 = 0
+                    opacity4 = 0
+                }else{
+                    $('.flag_line').show()
+                    $('.step_name_box').text(stepsConfig[normalStep]['namePosition']['name'])
+                }
+                
+                $('.flag1').css({
+                    left: stepObj['position1']['left'],
+                    bottom: stepObj['position1']['bottom'],
+                    opacity: opacity1
+                })
+                $('.flag2').css({
+                    left: stepObj['position2']['left'],
+                    bottom: stepObj['position2']['bottom'],
+                    opacity: opacity2
+                })
+                $('.flag3').css({
+                    left: stepObj['position3']['left'],
+                    bottom: stepObj['position3']['bottom'],
+                    opacity: opacity3
+                })
+                $('.flag4').css({
+                    left: stepObj['position4']['left'],
+                    bottom: stepObj['position4']['bottom'],
+                    opacity: opacity4
+                })
+            },
+            // 根据操作来计算旋转方向
+            handlerPanStatusChange: function(type,time){
+                let lineSpeedConfig = this.lineSpeedConfig
+                for(let key in lineSpeedConfig){
+                    if(!lineSpeedConfig[key]['doRotate']&&lineSpeedConfig[key]['rotate']>0){
+                        if(!!lineSpeedConfig[key]['rotates']){
+                            lineSpeedConfig[key]['type'] = type
+                        }else{
+                            if(type==='add'){
+                                lineSpeedConfig[key]['speed'] = lineSpeedConfig[key]['rotate']
+                            }else{
+                                lineSpeedConfig[key]['speed'] = -lineSpeedConfig[key]['rotate']
+                            }
+                        }
+                           
+                    }
+                }
+                setTimeout(function(){
+                    for(let key in lineSpeedConfig){
+                        if(!lineSpeedConfig[key]['doRotate']&&lineSpeedConfig[key]['rotate']>0){
+                            lineSpeedConfig[key]['speed'] = 0
+                        }
+                    }
+                },time)
+            },
+            // 轮盘旋转
+            rotate: function(){
+                let lineSpeedConfig = this.lineSpeedConfig
+                for(let key in lineSpeedConfig){
+                        if(!!lineSpeedConfig[key]['rotates']){
+                            if(lineSpeedConfig[key]['canRotate']){
+                                if(lineSpeedConfig[key]['type']=='add'){
+                                    lineSpeedConfig[key]['deg'] += lineSpeedConfig[key]['rotates'][lineSpeedConfig[key]['rotatesIndex']]
+                                }else{
+                                    lineSpeedConfig[key]['deg'] -= lineSpeedConfig[key]['rotates'][lineSpeedConfig[key]['rotatesIndex']]
+                                }
+                                lineSpeedConfig[key]['rotatesIndex']++
+                                if(lineSpeedConfig[key]['rotatesIndex']>=100){
+                                    this.closeOrOpenRotate('close')
+                                    lineSpeedConfig[key]['rotatesIndex'] = 0
+                                }
+                            }
+                        }else{
+                            lineSpeedConfig[key]['deg'] += lineSpeedConfig[key]['speed']
+                        }
+                        
+                        if(lineSpeedConfig[key]['deg']>=360||lineSpeedConfig[key]['deg']<=-360){
+                            lineSpeedConfig[key]['deg'] = 0
+                        }
+                        $(lineSpeedConfig[key]['id']).css({
+                            transform:'rotateZ('+lineSpeedConfig[key]['deg'] +'deg)'
+                        })
+                    // }
+                }
+                
+            },
+            // 轮盘连线
+            loadBaseLine: function (){
+                let baseDeg = this.baseDeg
+                $('.flag_line_box').css({
+                    transform:'rotateZ('+baseDeg+'deg)'
+                })
+            },
+            // 操作
+            doChange: function(op,step){
+                let me = this
+                me.auto=true
+                if(!me.antiShake()&&me.antiShake()!=undefined){
+                    if(me.flagShow){
+                        let stepObj
+                        me.closeOrOpenRotate('open')
+                        if(op == 'next'){
+                            me.baseDeg+=90
+                            stepObj = me.stepsConfig[me.nextStep]
+                            me.normalStep = me.nextStep
+                            me.handlerPanStatusChange('add',1000)
+                        }else{
+                            me.baseDeg-=90
+                            stepObj = me.stepsConfig[me.prevStep]
+                            me.normalStep = me.prevStep
+                            me.handlerPanStatusChange('reduce',1000)
+                        }
+                        me.loadView(null,true)
+                    }
+                }
+            },
+            closeOrOpenRotate:function(type){
+                let me = this
+                let lineSpeedConfig = this.lineSpeedConfig
+                for(let key in lineSpeedConfig){
+                    if(!!lineSpeedConfig[key]['rotates']){
+                        if(type === 'open'){
+                            lineSpeedConfig[key]['canRotate'] = true
+                        }else{
+                            lineSpeedConfig[key]['canRotate'] = false
+                        }
+                        
+                    }
+                }
+            },
+            //计算卡片最高的高度
+            calculationCardHeight:function(){
+                let arr = [$('.flag1')[0].offsetHeight,$('.flag2')[0].offsetHeight,$('.flag3')[0].offsetHeight,$('.flag4')[0].offsetHeight]
+                let max = Math.max.apply(null, arr)
+                let a = document.getElementsByClassName('flag')
+                for(let i = 0;i<a.length;i++){
+                    a[i].style.height = max+'px'
+                }
+            },
+            // 开始
+            panStart: function(){
+                let me = this
+                if(!me.flagShow){
+                    me.flagShow = true
+                    me.baseDeg = 90
+                    me.loadBaseLine()
+                    me.closeOrOpenRotate('open')
+                    $('#lunpan_box').css({
+                        transform:'rotateX(-0deg)rotateY(0deg)rotateZ(0deg)translateX(0px)translateY(0px)translateZ(0px)'
+                    })
+                    me.handlerPanStatusChange('add',1200)
+                    setTimeout(function(){
+                        me.loadView(null,true)
+                    },1500)
+                }
+            },
+            // 结束
+            panEnd: function(){
+                let me = this
+                if(me.flagShow){
+                    me.flagShow = false
+                    $('.flag').css({
+                        opacity:0
+                    })
+                    $('#lunpan_box').css({
+                        transform:'rotateX(-60deg)rotateY(0deg)rotateZ(20deg)translateX(100px)translateY(100px)translateZ(-100px)'
+                    })
+                    $('.flag_line').hide()
+                    $('.step_name_box').text('')
+                    setTimeout(function(){
+                        me.normalStep = 'step_1'
+                        me.nextStep = 'step_2'
+                        me.prevStep = 'step_4'
+                        me.loadView(null,false)
+                    },1500)
+                }
+            },
+
+            showStep: function(stepName){
+                if(stepName === this.normalStep){
+
+                }else if(stepName === this.nextStep){
+                    this.doChange('next')
+                }else if(stepName === this.prevStep){
+                    this.doChange('prev')
+                }else{
+                    let me = this
+                    me.doChange('next')
+                    setTimeout(()=>{
+                        me.doChange('next')
+                    },400)
+                }
+            },
+
+            opPan: function(){
+                this.auto=true
+                if(!this.antiShake()){
+                    if(this.panStatus){
+                        this.panStart()
+                        this.panStatus = false
+                    }else{
+                        this.panEnd()
+                        this.panStatus = true
+                    }
+                }
+                
+                
+            },
+            outOpPan:function(){
+                if(!this.auto){
+                    this.opPan()
+                }else{
+                    this.auto=false
+                }
+            },
+            outDoChange:function(){
+                if(!this.auto){
+                    this.doChange('next')
+                }else{
+                    this.auto=false
+                }
+            },
+            doAutoPlay:function(){
+                let me = this
+                setInterval(function(){
+                    if(me.panStatus){
+                        me.outOpPan()
+                    }else{
+                        me.outDoChange()
+                    }
+                },me['autoPlayConfig']['intervalTime'])
+            }
+        }
+
+        // 挂载
+        $(document).ready(function(){
+            // 可配置自动播放以及 每个步骤的间隔时间，默认5000ms
+            lunpan.init({
+                autoPlay: true,
+                intervalTime: 3000
+            })
+        });
+    </script>
+  </body>
+</html>
